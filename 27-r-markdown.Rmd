@@ -1,5 +1,5 @@
 ---
-title: "Chapter 27: R Markdown"
+title: "27. R Markdown"
 output: html_document
 ---
 
