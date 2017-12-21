@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, include=FALSE}
 library(tidyverse)
-```
+``` 
 
 ### 3.2.4 Exercises
 
@@ -50,3 +50,31 @@ ggplot(mpg, aes(x = class, y = drv)) +
 ```
 
 Scatterplots are suitable for displaying continuous variables (e.g., `cty` and `hwy`). `class` and `drv` are discrete variables.
+
+## 3.3.1 Exercises
+
+1. What’s gone wrong with this code? Why are the points not blue?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+In this example, colour has been mapped to an aesthetic. However, "blue" is not a variable in the dataset. To make the points blue, colour must be set manually (i.e., located *outside* the aesthetic mappings):
+
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+3. Which variables in `mpg` are categorical? Which variables are continuous? (Hint: type `?mpg` to read the documentation for the dataset). How can you see this information when you run `mpg?`
+
+Categorical: `manufacturer`, `model`, `trans`, `drv`, `fl`, `class`  
+Continuous: `year`, `cty`, `hwy`
+
+You can see this information located underneath the variable name in the output (e.g., `<chr>`)
+
+```{r}
+mpg
+```
