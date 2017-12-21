@@ -25,7 +25,7 @@ Nothing. No layers have been added to `ggplot()`.
 
 2. How many rows are in `mpg`? How many columns?
 
-232 rows and 11 columns in total.
+234 rows and 11 columns in total.
 
 ```{r}
 mpg
@@ -51,7 +51,7 @@ ggplot(mpg, aes(x = class, y = drv)) +
 
 Scatterplots are suitable for displaying continuous variables (e.g., `cty` and `hwy`). `class` and `drv` are discrete variables.
 
-## 3.3.1 Exercises
+### 3.3.1 Exercises
 
 1. What’s gone wrong with this code? Why are the points not blue?
 
@@ -60,7 +60,7 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
 ```
 
-In this example, colour has been mapped to an aesthetic. However, "blue" is not a variable in the dataset. To make the points blue, colour must be set manually (i.e., located *outside* the aesthetic mappings):
+In this example, colour has been mapped to an aesthetic. However, "blue" is not a variable in the dataset. To make the points blue, colour must be set manually (i.e., it must be located *outside* `aes()`:
 
 
 ```{r}
@@ -70,11 +70,38 @@ ggplot(data = mpg) +
 
 3. Which variables in `mpg` are categorical? Which variables are continuous? (Hint: type `?mpg` to read the documentation for the dataset). How can you see this information when you run `mpg?`
 
-Categorical: `manufacturer`, `model`, `trans`, `drv`, `fl`, `class`  
-Continuous: `year`, `cty`, `hwy`
-
-You can see this information located underneath the variable name in the output (e.g., `<chr>`)
-
 ```{r}
 mpg
 ```
+
+Categorical: `manufacturer`, `model`, `trans`, `drv`, `fl`, `class`  
+Continuous: `displ`, `year`, `cty`, `hwy`
+
+This information is located below the variable name in the output (e.g., `<chr>`).
+
+4. What happens if you map the same variable to multiple aesthetics?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ))
+```
+
+It creates a gradient along whichever axis the variable is assigned to.
+
+5. What does the `stroke` aesthetic do? What shapes does it work with? (Hint: use `?geom_point`)
+
+`stroke` increases the border width of shapes. However, not all shapes have a border.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), stroke = 2, shape = 23)
+```
+
+6. What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
+```
+
+In this example, the argument is evaluated and two additional groups are formed. This is displayed in addition to the `x` and `y` variables.
