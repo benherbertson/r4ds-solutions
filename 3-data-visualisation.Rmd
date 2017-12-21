@@ -1,0 +1,52 @@
+---
+title: "3. Data visualisation"
+output: html_document
+---
+
+***
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+
+### 3.2.4 Exercises
+
+1. Run `ggplot(data = mpg)`. What do you see?
+
+```{r}
+ggplot(data = mpg)
+```
+
+Nothing. No layers have been added to `ggplot()`.
+
+2. How many rows are in `mpg`? How many columns?
+
+232 rows and 11 columns in total.
+
+```{r}
+mpg
+```
+
+3. What does the `drv` variable describe? Read the help for `?mpg` to find out.
+
+`drv` describes whether the car is front-wheel drive, rear wheel drive, or 4wd.
+
+4. Make a scatterplot of `hwy` vs `cyl`.
+
+```{r}
+ggplot(mpg, aes(x = hwy, y = cyl)) +
+  geom_point()
+```
+
+5. What happens if you make a scatterplot of `class` vs `drv`? Why is the plot not useful?
+
+```{r}
+ggplot(mpg, aes(x = class, y = drv)) +
+  geom_point()
+```
+
+Scatterplots are suitable for displaying continuous variables (e.g., `cty` and `hwy`). `class` and `drv` are discrete variables.
