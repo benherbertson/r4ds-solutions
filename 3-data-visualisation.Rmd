@@ -106,6 +106,72 @@ ggplot(data = mpg) +
   
 In this example, the argument is evaluated and two additional groups are formed. This is displayed in addition to the `x` and `y` variables.
 
+### 3.5.1 Exercises
+
+1. What happens if you facet on a continuous variable?
+
+Each value of the continuous variable will be treated as a discrete category. This can result in a very large output!
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ cty, nrow = 2)
+```
+
+2. What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
+
+It means there are no four-wheel drive or rear-wheel drive cars with 5 cylinders. Also, there are no rear-wheel drive cars with 4 cylinders.
+
+The plot below shows the same thing but displays it in one plot.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl))
+```
+
+3. What plots does the following code make? What does `.` do?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+```
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
+
+`.` is used when you do not want to facet in a row or column.
+
+4. Take the first faceted plot in this section:
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
+
+Faceting is helpful when there are many data points and/or groups. When combined into one plot, it is more difficult to discern between these groups:
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
+  geom_point()
+```
+
+It also makes it easier to compare the groups when faceting is used.
+
+5. Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have `nrow` and `ncol` argument?
+
+`nrow` and `ncol` lets you specify the number of rows and columns to display when faceting. `dir` is an example of an option that controls the layout of panels. `facet_grid()` does not have `nrow` and `ncol` arguments because it facets in a combination of two variables.
+
+6. When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
+
+This might have something to do with the output.
+
 ### 3.6.1 Exercises
 
 1. What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
