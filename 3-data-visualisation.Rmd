@@ -103,5 +103,88 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
 ```
-
+  
 In this example, the argument is evaluated and two additional groups are formed. This is displayed in addition to the `x` and `y` variables.
+
+### 3.6.1 Exercises
+
+1. What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
+
+`geom_line`, `geom_boxplot`, `geom_histogram`, and `geom_area`.
+
+2. Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+(There are three separate lines because the global mappings are also passed onto `geom_smooth`.)
+
+3. What does show.legend = FALSE do? What happens if you remove it? Why do you think I used it earlier in the chapter?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class), show.legend = FALSE) + 
+  geom_smooth()
+```
+
+`show.legend = FALSE` removes the legend from the plot for `class`. If you remove `show.legend`, the legend appears in the plot. This is because `show.legend` is `NA` by default for `geom_point` (see `?geom_point`).
+
+4. What does the `se` argument to `geom_smooth()` do?
+
+It displays the confidence interval around `smooth` (this is `TRUE` by default).
+
+`level` allows you to specify the level of the confidence interval to use (e.g., 0.95).
+
+5. Will these two graphs look different? Why/why not?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+
+No, both will look the same because they use the same mappings. In the first example, the mappings are specified at the global level. In the second example, the mappings are specified at the local level.
+
+6. Recreate the R code necessary to generate the following graphs.
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(size = 3) +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(size = 3) +
+  geom_smooth(aes(group = drv), se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, colour = drv)) +
+  geom_point(size = 3) +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(colour = drv), size = 3) +
+  geom_smooth(se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(colour = drv), size = 3) +
+  geom_smooth(aes(linetype = drv), se = FALSE)
+```
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy, fill = drv)) +
+  geom_point(shape = 21, colour = "white", size = 3, stroke = 3)
+```
