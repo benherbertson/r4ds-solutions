@@ -110,7 +110,7 @@ In this example, the argument is evaluated and two additional groups are formed.
 
 1. What happens if you facet on a continuous variable?
 
-Each value of the continuous variable will be treated as a discrete category. This can result in a very large output!
+Each value of the continuous variable will be treated as a discrete category. This will usually result in a very large output! For example:
 
 ```{r}
 ggplot(data = mpg) + 
@@ -164,7 +164,7 @@ ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
 
 It also makes it easier to compare the groups when faceting is used.
 
-5. Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have `nrow` and `ncol` argument?
+5. Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have `nrow` and `ncol` arguments?
 
 `nrow` and `ncol` lets you specify the number of rows and columns to display when faceting. `dir` is an example of an option that controls the layout of panels. `facet_grid()` does not have `nrow` and `ncol` arguments because it facets in a combination of two variables.
 
@@ -254,3 +254,51 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
 ggplot(mpg, aes(x = displ, y = hwy, fill = drv)) +
   geom_point(shape = 21, colour = "white", size = 3, stroke = 3)
 ```
+
+### 3.7.1 Exercises
+
+1. What is the default geom associated with `stat_summary()`? How could you rewrite the previous plot to use that geom function instead of the stat function?
+
+The default geom associated with `stat_summary()` is `geom_pointrange`. `geom_pointrange` does not automatically compute the ymin or ymax values, so these need to be specified using `fun.ymin` and `fun.ymax` from `stat_summary`:
+
+```{r}
+ggplot(data = diamonds) +
+  geom_pointrange(mapping = aes(x = cut, y = depth),
+                  stat = "summary",
+                  fun.ymin = min,
+                  fun.ymax = max,
+                  fun.y = median)
+```
+
+2. What does `geom_col()` do? How is it different to `geom_bar()`?
+
+`geom_col()` is used when the heights of the bars represent values in the data. It uses `stat_identity` by default. In contrast, `geom_bar()` uses `stat_count` which bins the data prior to plotting.
+
+3. Most geoms and stats come in pairs that are almost always used in concert. Read through the documentation and make a list of all the pairs. What do they have in common?
+
+Some examples:  
+
+* `geom_point` -- `stat_identity`  
+* `geom_line` -- `stat_identity`  
+* `geom_crossbar` -- `stat_identity`  
+* `geom_area` -- `stat_identity`  
+* `geom_boxplot` -- `stat_boxplot`  
+* `geom_violin` -- `stat_ydensity`  
+* `geom_histogram` -- `stat_bin`  
+
+`stat_identity` appears the most common. However, geoms involving one variable only or a discrete variable tend to have a different stat default (e.g., `geom_histogram`).
+
+4. What variables does `stat_smooth()` compute? What parameters control its behaviour?
+
+`y`, `ymin`, `ymax`, and `se`. Basically, predicted values and the confidence interval. `method` determines which function to use (e.g., `lm`) for calculations of these variables.
+
+5. In our proportion bar chart, we need to set `group = 1`. Why? In other words what is the problem with these two graphs?
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop..))
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = color, y = ..prop..))
+```
+
+The problem with the above plots is that the proportions are calculated within each group, therefore showing a proportion of 1.00 for each `cut`. `group = 1` must be set for calculating the correct proportions.

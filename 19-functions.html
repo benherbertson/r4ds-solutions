@@ -133,14 +133,42 @@ $(document).ready(function () {
 <ul>
 <li>Because it is a non-numeric argument</li>
 </ul>
-<pre class="r"><code>x &lt;- c(1:10, Inf, &quot;&quot;)
+<pre class="r"><code>x &lt;- c(1:10, Inf, NA)
 
 rescale01 &lt;- function(x) {
   rng &lt;- range(x, na.rm = FALSE, finite = TRUE)
   (x - rng[1]) / (rng[2] - rng[1])
 }
 rescale01(x)</code></pre>
-<pre><code>## Error in x - rng[1]: non-numeric argument to binary operator</code></pre>
+<pre><code>##  [1] 0.0000000 0.1111111 0.2222222 0.3333333 0.4444444 0.5555556 0.6666667
+##  [8] 0.7777778 0.8888889 1.0000000       Inf        NA</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><p>In the second variant of rescale01(), infinite values are left unchanged. Rewrite rescale01() so that -Inf is mapped to 0, and Inf is mapped to 1.</p></li>
+<li><p>Practice turning the following code snippets into functions. Think about what each function does. What would you call it? How many arguments does it need? Can you rewrite it to be more expressive or less duplicative?</p></li>
+</ol>
+<pre class="r"><code># Calculates the proportion of missing values in a vector
+mean(is.na(x))</code></pre>
+<pre><code>## [1] 0.08333333</code></pre>
+<pre class="r"><code># Calculates the weight of a value
+x / sum(x, na.rm = TRUE)</code></pre>
+<pre><code>##  [1]   0   0   0   0   0   0   0   0   0   0 NaN  NA</code></pre>
+<pre class="r"><code># Calculates the coefficient of variation
+sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)</code></pre>
+<pre><code>## [1] NaN</code></pre>
+<pre class="r"><code>x &lt;- c(1, 5, 7, NA)
+
+prop_na &lt;- function(x) {
+  mean(is.na(x))
+}
+prop_na(x)</code></pre>
+<pre><code>## [1] 0.25</code></pre>
+<pre class="r"><code>div_sum &lt;- function(x) {
+  x / sum(x, na.rm = TRUE)
+}
+
+coef_var &lt;- function(x) {
+  sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)
+}</code></pre>
 </div>
 
 

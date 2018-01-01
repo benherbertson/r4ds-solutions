@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
+19-functions.Rmd
+19-functions.html
+27-r-markdown.html
+28-graphics-for-comm.html
+3-data-visualisation.html
