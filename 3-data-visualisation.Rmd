@@ -302,3 +302,34 @@ ggplot(data = diamonds) +
 ```
 
 The problem with the above plots is that the proportions are calculated within each group, therefore showing a proportion of 1.00 for each `cut`. `group = 1` must be set for calculating the correct proportions.
+
+### 3.8.1 Exercises
+
+1. What is the problem with this plot? How could you improve it?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+```
+
+Points may be overlapping each other (this is known as overplotting). To improve this plot, you could some random noise to the points by using `position = jitter` or, its useful shortcut, `geom_jitter()`.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point(position = "jitter")
+```
+
+2. What parameters to `geom_jitter()` control the amount of jittering?
+
+`width` and `height`.
+
+3. Compare and contrast `geom_jitter()` with `geom_count()`.
+
+4. What’s the default position adjustment for `geom_boxplot()`? Create a visualisation of the `mpg` dataset that demonstrates it.
+
+`position = "dodge"`.
+
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = drv, y = hwy))
+```
