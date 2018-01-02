@@ -312,7 +312,7 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   geom_point()
 ```
 
-Points may be overlapping each other (this is known as overplotting). To improve this plot, you could some random noise to the points by using `position = jitter` or, its useful shortcut, `geom_jitter()`.
+Points may be overlapping each other (this is known as overplotting). To improve this plot, you could add some random noise to the points by using `position = jitter`, or, its useful shortcut, `geom_jitter()`.
 
 ```{r}
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
@@ -324,6 +324,8 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 `width` and `height`.
 
 3. Compare and contrast `geom_jitter()` with `geom_count()`.
+
+`geom_count()` is similar to `geom_point()` but it maps the count to point areas. In contrast, `geom_jitter()` adds random noise to the each point to prevent overplotting.
 
 4. What’s the default position adjustment for `geom_boxplot()`? Create a visualisation of the `mpg` dataset that demonstrates it.
 
