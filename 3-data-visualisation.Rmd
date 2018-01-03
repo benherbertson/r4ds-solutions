@@ -60,7 +60,7 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
 ```
 
-In this example, colour has been mapped to an aesthetic. However, "blue" is not a variable in the dataset. To make the points blue, colour must be set manually (i.e., it must be located *outside* `aes()`:
+To make the points blue, colour must be set manually (i.e., it must be located *outside* `aes()`:
 
 
 ```{r}
@@ -118,7 +118,7 @@ ggplot(data = mpg) +
   facet_wrap(~ cty, nrow = 2)
 ```
 
-2. What do the empty cells in plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
+2. What do the empty cells in the plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
 
 It means there are no four-wheel drive or rear-wheel drive cars with 5 cylinders. Also, there are no rear-wheel drive cars with 4 cylinders.
 
@@ -155,14 +155,12 @@ ggplot(data = mpg) +
 
 What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?
 
-Faceting is helpful when there are many data points and/or groups. When combined into one plot, it is more difficult to discern between these groups:
+Faceting makes it easier to see the pattern within groups. As the dataset becomes larger, it becomes more preferential to use faceting when comparing groups instead of using the colour aesthetic.  However, it is more difficult to detect the overall pattern in the data when using faceting.
 
 ```{r}
 ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
   geom_point()
 ```
-
-It also makes it easier to compare the groups when faceting is used.
 
 5. Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have `nrow` and `ncol` arguments?
 
@@ -325,6 +323,14 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 
 3. Compare and contrast `geom_jitter()` with `geom_count()`.
 
+Here is an example of `geom_count()`:
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point() +
+  geom_count()
+```
+
 `geom_count()` is similar to `geom_point()` but it maps the count to point areas. In contrast, `geom_jitter()` adds random noise to the each point to prevent overplotting.
 
 4. What’s the default position adjustment for `geom_boxplot()`? Create a visualisation of the `mpg` dataset that demonstrates it.
@@ -332,6 +338,41 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 `position = "dodge"`.
 
 ```{r}
-ggplot(data = mpg) +
-  geom_boxplot(mapping = aes(x = drv, y = hwy))
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
+  geom_boxplot(mapping = aes(colour = drv))
 ```
+
+### 3.9.1 Exercises
+
+1. Turn a stacked bar chart into a pie chart using `coord_polar()`.
+
+```{r}
+ggplot(diamonds, aes(x = factor(1), fill = factor(cut))) + 
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+```
+
+As noted in the documentation for `coord_polar`, these plots should be used with caution because the polar coordinates have major perceptual problems.
+
+2. What does `labs()` do? Read the documentation.
+
+`labs()` allows you to modify axis, legend, and plot labels.
+
+3. What’s the difference between `coord_quickmap()` and `coord_map()`?
+
+`coord_map()` projects the earth onto a flat 2D plane. It does not preserve straight lines. `coord_quickmap()` is a quick approximation that does preserve straight lines. It requires less computation.
+
+4. What does the plot below tell you about the relationship between city and highway mpg? Why is `coord_fixed()` important? What does `geom_abline()` do?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() +
+  coord_fixed()
+```
+
+There is a positive relationship between city and highway mpg.
+
+`coord_fixed()` maintains the aspect ratio.
+
+`geom_abline()` adds a reference line that highlights the positive relationship between these two variables. It also shows that cars get more miles per gallon on the highway than they do in the city.
