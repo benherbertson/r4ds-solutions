@@ -6,4 +6,4 @@ My exercise solutions to [R for Data Science](http://r4ds.had.co.nz/) by Hadley 
 
 The solutions are organised by chapter.
 
-Eventually I will publish this using [bookdown](https://bookdown.org/).
+Eventually I might publish this using [bookdown](https://bookdown.org/).
