@@ -4,11 +4,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include=FALSE}
 library(nycflights13)
+library(tidyverse)
 ``` 
 
 ### 5.2.4 Exercises
@@ -141,7 +142,7 @@ The `one_of()` function allows you to use variables stored in a character vector
 select(flights, one_of(vars))
 ```
 
-It helps simplify code.
+It improves the readability of code.
 
 4. Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
 
@@ -209,3 +210,92 @@ Ties should be assigned the lowest rank. `ties.method = "min"` is the default fo
 
 Cosine, sine, tangent, arc-cosine, and more. See `?Trig`.
 
+### 5.6.7 Exercises
+
+1. Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:  
+
+  + A flight is 15 minutes early 50% of the time, and 15 minutes late 50% of the time.
+  
+  + A flight is always 10 minutes late.
+
+  + A flight is 30 minutes early 50% of the time, and 30 minutes late 50% of the time.
+
+  + 99% of the time a flight is on time. 1% of the time it’s 2 hours late.
+
+Which is more important: arrival delay or departure delay?
+
+Arrival delay is probably more important for travellers.
+
+```{r}
+
+```
+
+2. Come up with another approach that will give you the same output as `not_cancelled %>% count(dest)` and `not_cancelled %>% count(tailnum, wt = distance)` (without using `count()`).
+
+```{r, include=FALSE}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+```
+
+```{r}
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(count = n())
+
+not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(distance_total = sum(distance))
+```
+
+3. Our definition of cancelled flights (`is.na(dep_delay) | is.na(arr_delay)`) is slightly suboptimal. Why? Which is the most important column?
+
+Flights that do no depart cannot arrive at any location. However, flights that depart but are `NA` for `arr_delay` may have redirected or crashed.
+
+The importance of the column depends on the question being answered. `dep_delay` is probably more representative of cancelled flights for the above reason.
+
+4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+```{r}
+flights %>% 
+  group_by(month, day) %>% 
+  summarise(
+    cancelled = sum(is.na(dep_delay))
+  )
+```
+
+It is difficult to tell just from this output. Data visualisation can help:
+
+```{r, include=TRUE}
+flights %>% 
+  group_by(month, day) %>% 
+  summarise(
+    cancelled = sum(is.na(dep_delay)),
+    avg_delay = mean(dep_delay, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = cancelled, y = avg_delay)) +
+    geom_point() +
+    geom_smooth(se = TRUE)
+```
+
+There is a positive relationship between the proportion of cancelled flights and average delay. However, there are a few exceptional days with a high number of cancelled flights and relatively low average delay. If I had to guess, this might be related to bad weather.
+
+5. Which carrier has the worst delays? Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about `flights %>% group_by(carrier, dest) %>% summarise(n())`)
+
+Frontier Airlines (F9) has the worst delays:
+
+```{r}
+not_cancelled %>% 
+  group_by(carrier) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  arrange(desc(avg_delay))
+```
+
+No, because there is an uneven distribution in destinations by carrier.
+
+6. What does the `sort` argument to `count()` do. When might you use it?
+
+`sort = TRUE` will sort output in descending order of `n`. You can use it for ranking instead of using `min_rank()` and/or `arrange()`.
+
+```{r}
+not_cancelled %>% count(dest, sort = TRUE)
+```
