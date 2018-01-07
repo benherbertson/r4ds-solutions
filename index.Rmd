@@ -1,11 +1,18 @@
 ---
 title: "R for Data Science Exercise Solutions"
-author: "Ben Herbertson"
+author: Ben Herbertson
+date: "Updated 7 Jan 2018"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+***
+## A work in progress
+***
+My exercise solutions to [**"R for Data Science"**](https://www.amazon.com/R-Data-Science-Hadley-Wickham/dp/1491910399/ref=as_li_ss_tl?ie=UTF8&qid=1469550189&sr=8-1&keywords=R+for+data+science&linkCode=sl1&tag=devtools-20&linkId=6fe0069f9605cf847ed96c191f4e84dd) by Hadley Wickham & Garrett Grolemund. The online version of the book is available for [free](http://r4ds.had.co.nz/).
 
-28. [Graphics for communication](https://benherbertson.github.io/r4ds-solutions/28-graphics-for-comm.html)
+The solutions are organised by chapter.
+
+[**28** Graphics for communication](https://benherbertson.github.io/r4ds-solutions/28-graphics-for-comm.html)
