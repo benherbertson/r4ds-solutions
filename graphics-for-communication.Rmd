@@ -1,5 +1,5 @@
 ---
-title: "28. Graphics for communication"
+title: "28 Graphics for communication"
 output: html_document
 ---
 

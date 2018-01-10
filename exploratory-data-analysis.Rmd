@@ -1,0 +1,82 @@
+---
+title: "7. Exploratory Data Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+### 7.3.4 Exercises
+
+1. Explore the distribution of each of the `x`, `y`, and `z` variables in `diamonds`. What do you learn? Think about a diamond and how you might decide which dimension is the length, width, and depth.
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = x), binwidth = 0.5)
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = x), binwidth = 0.1) +
+  coord_cartesian(ylim = c(0, 500))
+```
+
+```{r}
+diamonds %>% 
+  count(cut_width(x, 0.5))
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = y), binwidth = 0.5)
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = y), binwidth = 0.5) +
+  coord_cartesian(ylim = c(0, 50))
+```
+
+```{r}
+diamonds %>% 
+  count(cut_width(y, 0.5))
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = z), binwidth = 0.5)
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = z), binwidth = 0.1) +
+  coord_cartesian(ylim = c(0, 50))
+```
+
+```{r}
+diamonds %>% 
+  count(cut_width(z, 0.5))
+```
+
+There are a number of outliers in each distribution that require further investigation.
+
+As seen when you compute the bin widths and corresponding counts by hand, the most common value for `x` and `y` is between 4.25 and 4.75. For `z`, the most common value is between 3.75 and 4.25. The bin width from 2.75 to 3.25 is also very common. Based on these values, `x` and `y` appear to be the length and width of the diamond, while `z` is most likely the depth. This is confirmed in the documentation (`?diamonds`).
+
+2. Explore the distribution of `price`. Do you discover anything unusual or surprising? (Hint: Carefully think about the `binwidth` and make sure you try a wide range of values.)
+
+
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = price))
+```
+
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = price), binwidth = 10)
+```
+
+There appears to be no diamonds with a price around $1300, as indicated by the missing gap in the histogram above. This is not consistent with the overall pattern.
+
+3. How many diamonds are 0.99 carat? How many are 1 carat? What do you think is the cause of the difference?
