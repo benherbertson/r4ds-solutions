@@ -1,0 +1,20 @@
+---
+title: '4. Workflow: scripts'
+output: html_document
+---
+
+### 6.3 Practice
+
+1. Go to the RStudio Tips twitter account, https://twitter.com/rstudiotips and find one tip that looks interesting. Practice using it!
+
+Ctrl + 1 (focus editor) and Ctrl + 2 (focus console) are my personal favourites.
+
+2. What other common mistakes will RStudio diagnostics report? Read https://support.rstudio.com/hc/en-us/articles/205753617-Code-Diagnostics to find out.
+
+Common mistakes such as:
+
+* Warn if variable used has no definition in scope  
+* Warn if variable is defined but not used  
+* Style
+
+Also, diagnostics for other languages such as C++, JavaScript, and Python.
