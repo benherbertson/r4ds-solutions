@@ -2,8 +2,6 @@
 
 ## A work in progress
 
-My exercise solutions to [R for Data Science](http://r4ds.had.co.nz/) by Hadley Wickham & Garrett Grolemund.
+My solutions to the exercises in [R for Data Science](http://r4ds.had.co.nz/) by Hadley Wickham & Garrett Grolemund.
 
-The solutions are organised by chapter.
-
-Eventually I might publish this using [bookdown](https://bookdown.org/).
+These can be accessed through a [website](https://benherbertson.github.io/r4ds-solutions/).
