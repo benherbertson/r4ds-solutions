@@ -6,12 +6,8 @@ output: html_document
 ***
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r, include=FALSE}
 library(tidyverse)
-``` 
+```
 
 ### 3.2.4 Exercises
 
@@ -21,15 +17,14 @@ library(tidyverse)
 ggplot(data = mpg)
 ```
 
-Nothing. No layers have been added to `ggplot()`.
+The plot is empty because no layers have been added to `ggplot()`.
 
 2. How many rows are in `mpg`? How many columns?
-
-234 rows and 11 columns in total.
 
 ```{r}
 mpg
 ```
+234 rows and 11 columns in total.
 
 3. What does the `drv` variable describe? Read the help for `?mpg` to find out.
 
@@ -62,7 +57,6 @@ ggplot(data = mpg) +
 
 To make the points blue, colour must be set manually (i.e., it must be located *outside* `aes()`:
 
-
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
@@ -77,7 +71,7 @@ mpg
 Categorical: `manufacturer`, `model`, `trans`, `drv`, `fl`, `class`  
 Continuous: `displ`, `year`, `cty`, `hwy`
 
-This information is located below the variable name in the output (e.g., `<chr>`).
+This information is located below the variable name in the output (e.g., `<chr>` indicates a character string which is categorical).
 
 4. What happens if you map the same variable to multiple aesthetics?
 
@@ -104,7 +98,7 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
 ```
   
-In this example, the argument is evaluated and two additional groups are formed. This is displayed in addition to the `x` and `y` variables.
+In this example, each observation with `displ < 5` is grouped together (`TRUE`). All remaining observations form a second group (`FALSE`).
 
 ### 3.5.1 Exercises
 
@@ -120,14 +114,14 @@ ggplot(data = mpg) +
 
 2. What do the empty cells in the plot with `facet_grid(drv ~ cyl)` mean? How do they relate to this plot?
 
-It means there are no four-wheel drive or rear-wheel drive cars with 5 cylinders. Also, there are no rear-wheel drive cars with 4 cylinders.
-
-The plot below shows the same thing but displays it in one plot.
-
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = drv, y = cyl))
 ```
+
+It means there are no 4wd or rear wheel drive cars with 5 cylinders. Also, there are no rear wheel drive cars with 4 cylinders. No cars have 7 cylinders.
+
+The plot above shows the same information as the plot with `facet_grid(drv ~ cyl)`, but displayed in one plot rather than facetting a grid of multiple plots.
 
 3. What plots does the following code make? What does `.` do?
 
@@ -157,18 +151,13 @@ What are the advantages to using faceting instead of the colour aesthetic? What 
 
 Faceting makes it easier to see the pattern within groups. As the dataset becomes larger, it becomes more preferential to use faceting when comparing groups instead of using the colour aesthetic.  However, it is more difficult to detect the overall pattern in the data when using faceting.
 
-```{r}
-ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
-  geom_point()
-```
-
 5. Read `?facet_wrap`. What does `nrow` do? What does `ncol` do? What other options control the layout of the individual panels? Why doesn’t `facet_grid()` have `nrow` and `ncol` arguments?
 
 `nrow` and `ncol` lets you specify the number of rows and columns to display when faceting. `dir` is an example of an option that controls the layout of panels. `facet_grid()` does not have `nrow` and `ncol` arguments because it facets in a combination of two variables.
 
 6. When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
 
-This might have something to do with the output.
+Using the variable with more unique levels in the columns produces a more readable output on most computer monitors.
 
 ### 3.6.1 Exercises
 
@@ -184,9 +173,9 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) +
   geom_smooth(se = FALSE)
 ```
 
-(There are three separate lines because the global mappings are also passed onto `geom_smooth`.)
+I did not predict three separate lines. However, the mappings are global. Therefore, these are passed to `geom_point` *and* `geom_smooth`.
 
-3. What does show.legend = FALSE do? What happens if you remove it? Why do you think I used it earlier in the chapter?
+3. What does `show.legend = FALSE` do? What happens if you remove it? Why do you think I used it earlier in the chapter?
 
 ```{r}
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
@@ -288,7 +277,7 @@ Some examples:
 
 4. What variables does `stat_smooth()` compute? What parameters control its behaviour?
 
-`y`, `ymin`, `ymax`, and `se`. Basically, predicted values and the confidence interval. `method` determines which function to use (e.g., `lm`) for calculations of these variables.
+`y`, `ymin`, `ymax`, and `se`. Basically, predicted values and the confidence interval. `method` determines which function to use (e.g., `lm`) to calculate these variables.
 
 5. In our proportion bar chart, we need to set `group = 1`. Why? In other words what is the problem with these two graphs?
 
@@ -360,7 +349,7 @@ As noted in the documentation for `coord_polar`, these plots should be used with
 
 3. What’s the difference between `coord_quickmap()` and `coord_map()`?
 
-`coord_map()` projects the earth onto a flat 2D plane. It does not preserve straight lines. `coord_quickmap()` is a quick approximation that does preserve straight lines. It requires less computation.
+`coord_map()` projects the earth onto a flat 2D plane. It does not preserve straight lines. `coord_quickmap()` is a quick approximation that preserves straight lines. It requires less computation.
 
 4. What does the plot below tell you about the relationship between city and highway mpg? Why is `coord_fixed()` important? What does `geom_abline()` do?
 
