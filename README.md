@@ -4,4 +4,4 @@
 
 My solutions to the exercises in [R for Data Science](http://r4ds.had.co.nz/) by Hadley Wickham & Garrett Grolemund.
 
-These can be accessed through a [website](https://benherbertson.github.io/r4ds-solutions/).
+These contents have been published as a [website](https://benherbertson.github.io/r4ds-solutions/).
