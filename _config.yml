@@ -1,2 +1,6 @@
 name: R for Data Science Exercise Solutions
 markdown: kramdown
+analytics:
+  provider: "google-universal"
+  google:
+ 	tracking_id: "UA-113141372-1"
