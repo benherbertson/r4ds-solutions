@@ -117,99 +117,14 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore"><ol start="10" style="list-style-type: decimal">
-<li>Tibbles</li>
+<h1 class="title toc-ignore"><ol start="11" style="list-style-type: decimal">
+<li>Data import</li>
 </ol></h1>
 
 </div>
 
 
 <div id="exercises" class="section level3">
-<h3>10.5 Exercises</h3>
-<ol style="list-style-type: decimal">
-<li>How can you tell if an object is a tibble? (Hint: try printing <code>mtcars</code>, which is a regular data frame).</li>
-</ol>
-<p><code># A tibble:</code> is displayed in the top left when printing the data frame. Additional information is printed, such as column types and total number of rows and columns.</p>
-<ol start="2" style="list-style-type: decimal">
-<li>Compare and contrast the following operations on a <code>data.frame</code> and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?</li>
-</ol>
-<pre class="r"><code>df &lt;- data.frame(abc = 1, xyz = &quot;a&quot;)
-df$x
-df[, &quot;xyz&quot;]
-df[, c(&quot;abc&quot;, &quot;xyz&quot;)]</code></pre>
-<pre class="r"><code>df &lt;- tibble(abc = 1, xyz = &quot;a&quot;)
-df$x</code></pre>
-<pre><code>## Warning: Unknown or uninitialised column: 'x'.</code></pre>
-<pre><code>## NULL</code></pre>
-<pre class="r"><code>df[, &quot;xyz&quot;]</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##     xyz
-##   &lt;chr&gt;
-## 1     a</code></pre>
-<pre class="r"><code>df[, c(&quot;abc&quot;, &quot;xyz&quot;)]</code></pre>
-<pre><code>## # A tibble: 1 x 2
-##     abc   xyz
-##   &lt;dbl&gt; &lt;chr&gt;
-## 1     1     a</code></pre>
-<p>The default data frame uses partial matching. In comparison, tibbles do not. By default, data frames also appear to store strings as factors (see <code>df[, &quot;xyz&quot;</code> and <code>df[, c(&quot;abc&quot;,&quot;xyz&quot;)]</code> output).</p>
-<ol start="3" style="list-style-type: decimal">
-<li>If you have the name of a variable stored in an object, e.g. <code>var &lt;- &quot;mpg&quot;</code>, how can you extract the reference variable from a tibble?</li>
-</ol>
-<p>By using the double bracket, <code>[[</code>. For example, <code>df[[var]]</code>.</p>
-<ol start="4" style="list-style-type: decimal">
-<li>Practice referring to non-syntactic names in the following data frame by:
-<ol style="list-style-type: decimal">
-<li>Extracting the variable called <code>1</code>.</li>
-<li>Plotting a scatterplot of <code>1</code> vs <code>2</code>.</li>
-<li>Creating a new column called <code>3</code> which is <code>2</code> divided by <code>1</code>.</li>
-<li>Renaming the columns to <code>one</code>, <code>two</code> and <code>three</code>.</li>
-</ol></li>
-</ol>
-<pre class="r"><code>annoying &lt;- tibble(
-  `1` = 1:10,
-  `2` = `1` * 2 + rnorm(length(`1`))
-)</code></pre>
-<p>Extracting the variable called <code>1</code>:</p>
-<pre class="r"><code>annoying$`1`</code></pre>
-<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
-<p>Plotting a scatterplot of <code>1</code> vs <code>2</code>:</p>
-<pre class="r"><code>ggplot(annoying, aes(`1`, `2`)) +
-  geom_point()</code></pre>
-<p><img src="data:image/png;base64,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" width="672" /></p>
-<p>Creating a new column called <code>3</code> which is <code>2</code> divided by <code>1</code>:</p>
-<pre class="r"><code>annoying &lt;- annoying %&gt;%
-  mutate(`3` = `2` / `1`)</code></pre>
-<p>Renaming the columns to <code>one</code>, <code>two</code> and <code>three</code>:</p>
-<pre class="r"><code>annoying &lt;- annoying %&gt;%
-  rename(`one` = `1`,
-         `two` = `2`,
-         `three` = `3`)</code></pre>
-<ol start="5" style="list-style-type: decimal">
-<li>What does <code>tibble::enframe()</code> do? When might you use it?</li>
-</ol>
-<p>It converts atomic vectors or lists to two-column data frames.</p>
-<ol start="6" style="list-style-type: decimal">
-<li>What option controls how many additional column names are printed at the footer of a tibble?</li>
-</ol>
-<p><code>n_extra</code> from <code>print.tbl()</code>. For example:</p>
-<pre class="r"><code>print(flights, n_extra = 1)</code></pre>
-<pre><code>## # A tibble: 336,776 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
-##  1  2013     1     1      517            515         2      830
-##  2  2013     1     1      533            529         4      850
-##  3  2013     1     1      542            540         2      923
-##  4  2013     1     1      544            545        -1     1004
-##  5  2013     1     1      554            600        -6      812
-##  6  2013     1     1      554            558        -4      740
-##  7  2013     1     1      555            600        -5      913
-##  8  2013     1     1      557            600        -3      709
-##  9  2013     1     1      557            600        -3      838
-## 10  2013     1     1      558            600        -2      753
-## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
-## #   ...</code></pre>
-</div>
-<div id="exercises-1" class="section level3">
 <h3>11.2.2 Exercises</h3>
 <ol style="list-style-type: decimal">
 <li>What function would you use to read a file where fields were separated with “|”?</li>
@@ -266,6 +181,105 @@ read_csv(&quot;a;b\n1;3&quot;)</code></pre>
 ##       a     b
 ##   &lt;int&gt; &lt;int&gt;
 ## 1     1     3</code></pre>
+</div>
+<div id="exercises-1" class="section level3">
+<h3>11.3.5 Exercises</h3>
+<ol style="list-style-type: decimal">
+<li>What are the most important arguments to <code>locale()</code>?</li>
+</ol>
+<p><code>date_names</code> and maybe <code>decimal_mark</code>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>What happens if you try and set <code>decimal_mark</code> and <code>grouping_mark</code> to the same character? What happens to the default value of <code>grouping_mark</code> when you set <code>decimal_mark</code> to “,”? What happens to the default value of <code>decimal_mark</code> when you set the <code>grouping_mark</code> to “.”?</li>
+</ol>
+<pre class="r"><code>locale(decimal_mark = &quot;,&quot;, grouping_mark = &quot;,&quot;)</code></pre>
+<pre><code>## Error: `decimal_mark` and `grouping_mark` must be different</code></pre>
+<p>It produces an error.</p>
+<pre class="r"><code>locale(decimal_mark = &quot;,&quot;)</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123.456,78
+## Formats:  %AD / %AT
+## Timezone: UTC
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<p>The default value for <code>grouping_mark</code> is changed to “.”.</p>
+<pre class="r"><code>locale(grouping_mark = &quot;.&quot;)</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123.456,78
+## Formats:  %AD / %AT
+## Timezone: UTC
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<p>The default value for <code>decimal_mark</code> is changed to “,”.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>I didn’t discuss the <code>date_format</code> and <code>time_format</code> options to <code>locale()</code>. What do they do? Construct an example that shows when they might be useful.</li>
+</ol>
+<p><code>date_format</code> and <code>time_format</code> allows you to specify the default date and time formats.</p>
+<pre class="r"><code>str(parse_guess(&quot;01/13/2018&quot;, locale = locale(date_format = &quot;%m/%d/%Y&quot;)))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2018-01-13&quot;</code></pre>
+<p>According to <code>vignette(&quot;readr&quot;)</code>, <code>time_format</code> isn’t currently used for anything.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>If you live outside the US, create a new locale object that encapsulates the settings for the types of file you read most commonly.</li>
+</ol>
+<pre class="r"><code>locale(date_names = &quot;en&quot;, date_format = &quot;%d/%m/%Y&quot;, decimal_mark = &quot;.&quot;,
+       grouping_mark = &quot;,&quot;, tz = &quot;Australia/Perth&quot;)</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123,456.78
+## Formats:  %d/%m/%Y / %AT
+## Timezone: Australia/Perth
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>What’s the difference between <code>read_csv()</code> and <code>read_csv2()</code>?</li>
+</ol>
+<p><code>read_csv2</code> uses “;” for separators instead of “,”.</p>
+<ol start="6" style="list-style-type: decimal">
+<li>What are the most common encodings used in Europe? What are the most common encodings used in Asia? Do some googling to find out.</li>
+</ol>
+<p>UTF-8 is the standard worldwide. In Europe, ISO 8859-1 is a common encoding. Shift JIS is a common encoding in Asia.</p>
+<ol start="7" style="list-style-type: decimal">
+<li>Generate the correct format string to parse each of the following dates and times:</li>
+</ol>
+<pre class="r"><code>d1 &lt;- &quot;January 1, 2010&quot;
+d2 &lt;- &quot;2015-Mar-07&quot;
+d3 &lt;- &quot;06-Jun-2017&quot;
+d4 &lt;- c(&quot;August 19 (2015)&quot;, &quot;July 1 (2015)&quot;)
+d5 &lt;- &quot;12/30/14&quot; # Dec 30, 2014
+t1 &lt;- &quot;1705&quot;
+t2 &lt;- &quot;11:15:10.12 PM&quot;</code></pre>
+<pre class="r"><code>str(parse_date(d1, format = &quot;%B %d, %Y&quot;))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2010-01-01&quot;</code></pre>
+<pre class="r"><code>str(parse_date(d2, format = &quot;%Y-%b-%d&quot;))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2015-03-07&quot;</code></pre>
+<pre class="r"><code>str(parse_date(d3, format = &quot;%d-%b-%Y&quot;))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2017-06-06&quot;</code></pre>
+<pre class="r"><code>str(parse_date(d4, format = &quot;%B %d (%Y)&quot;))</code></pre>
+<pre><code>##  Date[1:2], format: &quot;2015-08-19&quot; &quot;2015-07-01&quot;</code></pre>
+<pre class="r"><code>str(parse_date(d5, format = &quot;%m/%d/%y&quot;))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2014-12-30&quot;</code></pre>
+<pre class="r"><code>str(parse_time(t1, format = &quot;%H%M&quot;))</code></pre>
+<pre><code>## Classes 'hms', 'difftime'  atomic [1:1] 61500
+##   ..- attr(*, &quot;units&quot;)= chr &quot;secs&quot;</code></pre>
+<pre class="r"><code>str(parse_time(t2, format = &quot;%H:%M:%OS %p&quot;))</code></pre>
+<pre><code>## Classes 'hms', 'difftime'  atomic [1:1] 83710
+##   ..- attr(*, &quot;units&quot;)= chr &quot;secs&quot;</code></pre>
 </div>
 
 

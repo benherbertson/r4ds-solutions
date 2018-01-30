@@ -33,6 +33,7 @@ df$x
 df[, "xyz"]
 df[, c("abc", "xyz")]
 ```
+
 The default data frame uses partial matching. In comparison, tibbles do not. By default, data frames also appear to store strings as factors (see `df[, "xyz"` and `df[, c("abc","xyz")]` output).
 
 3.  If you have the name of a variable stored in an object, e.g. `var <- "mpg"`, how can you extract the reference variable from a tibble?
@@ -84,6 +85,64 @@ It converts atomic vectors or lists to two-column data frames.
 6.  What option controls how many additional column names are printed at the footer of a tibble?
 
 `n_extra` from `print.tbl()`. For example:
+
 ```{r}
 print(flights, n_extra = 1)
+```
+
+### 11.2.2 Exercises
+
+1.  What function would you use to read a file where fields were separated with
+“|”?
+
+`read_delim()`. The `delim` argument can be used to seperate fields with "|".
+
+2.  Apart from `file`, `skip`, and `comment`, what other arguments do `read_csv()` and `read_tsv()` have in common?
+
+Some other arguments they have in common include `col_names`, `col_types`, `locale`, `na`. In fact, in appears they share the exact same arguments.
+
+3.  What are the most important arguments to `read_fwf()`?
+
+`widths`, `start`, and `end`.
+
+4.  Sometimes strings in a CSV file contain commas. To prevent them from causing problems they need to be surrounded by a quoting character, like `"` or `'`. By convention, `read_csv()` assumes that the quoting character will be `"`, and if you want to change it you’ll need to use `read_delim()` instead. What arguments do you need to specify to read the following text into a data frame?
+
+```{r, eval=FALSE}
+"x,y\n1,'a,b'"
+```
+
+```{r}
+x <- "x,y\n1,'a,b'"
+df <- read_delim(x, ",", quote = "'")
+```
+
+5.  Identify what is wrong with each of the following inline CSV files. What happens when you run the code?
+
+```{r,eval=FALSE}
+read_csv("a,b\n1,2,3\n4,5,6")
+read_csv("a,b,c\n1,2\n1,2,3,4")
+read_csv("a,b\n\"1")
+read_csv("a,b\n1,2\na,b")
+read_csv("a;b\n1;3")
+```
+
+```{r}
+read_csv("a,b,c\n1,2,3\n4,5,6")
+```
+
+```{r}
+read_csv("a,b,c\n1,2,1\n2,3,4")
+```
+
+```{r, warning=FALSE}
+read_csv("a,b\n1")
+```
+
+It's unclear what the intent was here:
+```{r}
+read_csv("a,b\n1,2\na,b")
+```
+
+```{r}
+read_csv("a,b\n1,3")
 ```
