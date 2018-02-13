@@ -1,9 +1,8 @@
 ---
 title: "13. Relational data"
 output:
-  html_document:
-    toc: true
-    toc_depth: 3
+  rmdformats::html_clean:
+    highlight: kate
 ---
 
 ```{r setup, include = FALSE}
@@ -14,7 +13,7 @@ library(nycflights13)
 library(maps)
 ```
 
-### 13.2.1 Exercises
+## 13.2.1 Exercises
 
 1.  Imagine you wanted to draw (approximately) the route each plane flies from
     its origin to its destination. What variables would you need? What tables
@@ -42,7 +41,7 @@ The `weather` table may also be helpful as wind speed, wind direction, and visib
 
 You would have date and name variables. The primary key of this table would be date. It would match to `year`, `month`, and `day` in other tables such as `flights`.
 
-### 13.3.1 Exercises
+## 13.3.1 Exercises
 
 1.  Add a surrogate key to `flights`.
 
@@ -123,7 +122,7 @@ ggplot2::diamonds %>%
     How would you characterise the relationship between the `Batting`,
     `Pitching`, and `Fielding` tables?
     
-### 13.4.6 Exercises
+## 13.4.6 Exercises
 
 1.  Compute the average delay by destination, then join on the `airports`
     data frame so you can show the spatial distribution of delays. Here's an
@@ -256,7 +255,7 @@ flights %>%
       coord_quickmap()
 ```
 
-### 13.5.1 Exercises
+## 13.5.1 Exercises
 
 1.  What does it mean for a flight to have a missing `tailnum`? What do the
     tail numbers that don't have a matching record in `planes` have in common?
