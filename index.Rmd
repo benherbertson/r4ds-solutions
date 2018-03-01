@@ -1,0 +1,1349 @@
+---
+title: "R for Data Science Exercise Solutions"
+author: "Ben Herbertson"
+date: "Updated 2018-03-01"
+output:
+  rmdformats::html_clean
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+---
+
+# 1. Data visualisation
+
+## 3.2.4 Exercises
+
+1.  Run `ggplot(data = mpg)`. What do you see?
+
+```{r}
+ggplot(data = mpg)
+```
+
+Nothing. The plot is empty because no layers have been added to `ggplot()`.
+
+2.  How many rows are in `mpg`? How many columns?
+
+```{r}
+mpg
+```
+
+234 rows and 11 columns in total.
+
+3.  What does the `drv` variable describe?  Read the help for `?mpg` to find
+    out.
+
+`drv` describes whether the car is front-wheel drive, rear wheel drive, or 4wd.
+
+4.  Make a scatterplot of `hwy` vs `cyl`.
+
+```{r}
+ggplot(mpg, aes(x = hwy, y = cyl)) +
+  geom_point()
+```
+
+5.  What happens if you make a scatterplot of `class` vs `drv`? Why is
+    the plot not useful?
+
+```{r}
+ggplot(mpg, aes(x = class, y = drv)) +
+  geom_point()
+```
+
+Scatterplots are useful for displaying continuous variables (e.g., `cty` and `hwy`). `class` and `drv` are categorical variables.
+
+## 3.3.1 Exercises
+
+1.  What's gone wrong with this code? Why are the points not blue?
+
+    ```{r}
+    ggplot(data = mpg) + 
+      geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+    ```
+    
+To make the points blue, colour must be set manually (i.e., it must be located *outside* `aes()`):
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+2.  Which variables in `mpg` are categorical? Which variables are continuous? 
+    (Hint: type `?mpg` to read the documentation for the dataset). How
+    can you see this information when you run `mpg`?
+    
+```{r}
+mpg
+```
+
+Categorical: `manufacturer`, `model`, `trans`, `drv`, `fl`, `class`  
+Continuous: `displ`, `year`, `cty`, `hwy`
+
+This information is located below the variable name in the output (e.g., `<chr>` indicates a character string which is categorical).
+
+3.  Map a continuous variable to `color`, `size`, and `shape`. How do
+    these aesthetics behave differently for categorical vs. continuous
+    variables?
+    
+4.  What happens if you map the same variable to multiple aesthetics?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ))
+```
+
+It creates a gradient along whichever axis the variable is assigned to.
+
+5.  What does the `stroke` aesthetic do? What shapes does it work with?
+    (Hint: use `?geom_point`)
+    
+`stroke` increases the border width of shapes. However, not all shapes have a border.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), stroke = 2, shape = 23)
+```
+    
+6.  What happens if you map an aesthetic to something other than a variable 
+    name, like `aes(colour = displ < 5)`?
+    
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
+```
+  
+In this example, each observation with `displ < 5` is grouped together (`TRUE`). All remaining observations form a second group (`FALSE`).
+
+# 10. Tibbles
+
+```{r, include = FALSE}
+library(nycflights13)
+```
+
+## 10.5 Exercises
+
+1.  How can you tell if an object is a tibble? (Hint: try printing `mtcars`,
+    which is a regular data frame).
+
+`# A tibble:` is displayed in the top left of the output. Also, additional information is printed, such as column types and total number of rows and columns.
+
+```{r}
+as_tibble(mtcars)
+```
+
+2.  Compare and contrast the following operations on a `data.frame` and 
+    equivalent tibble. What is different? Why might the default data frame
+    behaviours cause you frustration?
+    
+    ```{r, eval = FALSE}
+    df <- data.frame(abc = 1, xyz = "a")
+    df$x
+    df[, "xyz"]
+    df[, c("abc", "xyz")]
+    ```
+
+```{r}
+df <- tibble(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+The default data frame uses partial matching. In comparison, tibbles do not. Data frames also store strings as factors by default.
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+glimpse(df)
+```
+
+3.  If you have the name of a variable stored in an object, e.g. `var <- "mpg"`,
+    how can you extract the reference variable from a tibble?
+
+By using the double bracket, `[[`. For example, `df[[var]]`.
+
+4.  Practice referring to non-syntactic names in the following data frame by:
+
+    1.  Extracting the variable called `1`.
+
+    2.  Plotting a scatterplot of `1` vs `2`.
+
+    3.  Creating a new column called `3` which is `2` divided by `1`.
+        
+    4.  Renaming the columns to `one`, `two` and `three`. 
+    
+    ```{r}
+    annoying <- tibble(
+      `1` = 1:10,
+      `2` = `1` * 2 + rnorm(length(`1`))
+    )
+    ```
+
+Extracting the variable called `1`:
+
+```{r}
+annoying$`1`
+```
+
+Plotting a scatterplot of `1` vs `2`:
+
+```{r}
+ggplot(annoying, aes(`1`, `2`)) +
+  geom_point()
+```
+
+Creating a new column called `3` which is `2` divided by `1`:
+
+```{r}
+annoying <- annoying %>%
+  mutate(`3` = `2` / `1`)
+```
+
+Renaming the columns to `one`, `two` and `three`:
+
+```{r}
+annoying <- annoying %>%
+  rename(`one` = `1`,
+         `two` = `2`,
+         `three` = `3`)
+```
+
+5.  What does `tibble::enframe()` do? When might you use it?
+
+It converts atomic vectors or lists to two-column data frames.
+
+6.  What option controls how many additional column names are printed
+    at the footer of a tibble?
+
+`n_extra` from `print.tbl()`. For example:
+
+```{r}
+print(flights, n_extra = 1)
+```
+
+# 11. Data import
+
+## 11.2.2 Exercises
+
+1.  What function would you use to read a file where fields were separated with  
+    "|"?
+
+`read_delim()`. The `delim` argument can be used to separate fields with "|".
+
+2.  Apart from `file`, `skip`, and `comment`, what other arguments do
+    `read_csv()` and `read_tsv()` have in common?
+
+Some other arguments they have in common: `col_names`, `col_types`, `locale`, and `na`. In fact, it appears they share the exact same arguments.
+
+3.  What are the most important arguments to `read_fwf()`?
+
+`widths`, `start`, and `end`.
+
+4.  Sometimes strings in a CSV file contain commas. To prevent them from
+    causing problems they need to be surrounded by a quoting character, like
+    `"` or `'`. By convention, `read_csv()` assumes that the quoting
+    character will be `"`, and if you want to change it you'll need to
+    use `read_delim()` instead. What arguments do you need to specify
+    to read the following text into a data frame?
+    
+    ```{r, eval = FALSE}
+    "x,y\n1,'a,b'"
+    ```
+
+```{r}
+x <- "x,y\n1,'a,b'"
+df <- read_delim(x, ",", quote = "'")
+```
+
+5.  Identify what is wrong with each of the following inline CSV files. 
+    What happens when you run the code?
+    
+    ```{r, eval = FALSE}
+    read_csv("a,b\n1,2,3\n4,5,6")
+    read_csv("a,b,c\n1,2\n1,2,3,4")
+    read_csv("a,b\n\"1")
+    read_csv("a,b\n1,2\na,b")
+    read_csv("a;b\n1;3")
+    ```
+
+Let's fix these:
+
+```{r}
+read_csv("a,b,c\n1,2,3\n4,5,6")
+```
+
+```{r}
+read_csv("a,b,c\n1,2,1\n2,3,4")
+```
+
+```{r, warning=FALSE}
+read_csv("a,b\n1")
+```
+
+It's unclear what the intent was here:
+
+```{r}
+read_csv("a,b\n1,2\na,b")
+```
+
+```{r}
+read_csv("a,b\n1,3")
+```
+
+## 11.3.5 Exercises
+
+1.  What are the most important arguments to `locale()`?
+
+`date_names` and maybe `decimal_mark`.
+
+2.  What happens if you try and set `decimal_mark` and `grouping_mark` 
+    to the same character? What happens to the default value of 
+    `grouping_mark` when you set `decimal_mark` to ","? What happens
+    to the default value of `decimal_mark` when you set the `grouping_mark`
+    to "."?
+
+```{r, error=TRUE}
+locale(decimal_mark = ",", grouping_mark = ",")
+```
+
+It produces an error.
+
+```{r}
+locale(decimal_mark = ",")
+```
+
+The default value for `grouping_mark` is changed to ".".
+
+```{r}
+locale(grouping_mark = ".")
+```
+
+The default value for `decimal_mark` is changed to ",".
+
+3.  I didn't discuss the `date_format` and `time_format` options to
+    `locale()`. What do they do? Construct an example that shows when 
+    they might be useful.
+
+`date_format` and `time_format` allows you to specify the default date and time formats.
+
+```{r}
+str(parse_guess("01/13/2018", locale = locale(date_format = "%m/%d/%Y")))
+```
+
+According to `vignette("readr")`, `time_format` isn't currently used for anything.
+
+4.  If you live outside the US, create a new locale object that encapsulates 
+    the settings for the types of file you read most commonly.
+
+```{r}
+locale(date_names = "en", date_format = "%d/%m/%Y", decimal_mark = ".",
+       grouping_mark = ",", tz = "Australia/Perth")
+```
+
+5.  What's the difference between `read_csv()` and `read_csv2()`?
+
+`read_csv2` uses ";" (i.e., a semi-colon) for separators instead of "," (a comma).
+
+6.  What are the most common encodings used in Europe? What are the
+    most common encodings used in Asia? Do some googling to find out.
+
+UTF-8 is the standard worldwide. In Europe, ISO 8859-1 is a common encoding. Shift JIS is a common encoding in Asia.
+
+7.  Generate the correct format string to parse each of the following 
+    dates and times:
+
+```{r}
+d1 <- "January 1, 2010"
+d2 <- "2015-Mar-07"
+d3 <- "06-Jun-2017"
+d4 <- c("August 19 (2015)", "July 1 (2015)")
+d5 <- "12/30/14" # Dec 30, 2014
+t1 <- "1705"
+t2 <- "11:15:10.12 PM"
+```
+
+```{r}
+str(parse_date(d1, format = "%B %d, %Y"))
+str(parse_date(d2, format = "%Y-%b-%d"))
+str(parse_date(d3, format = "%d-%b-%Y"))
+str(parse_date(d4, format = "%B %d (%Y)"))
+str(parse_date(d5, format = "%m/%d/%y"))
+str(parse_time(t1, format = "%H%M"))
+str(parse_time(t2, format = "%H:%M:%OS %p"))
+```
+
+# 12. Tidy data
+
+## 12.2.1 Exercises
+
+1.  Using prose, describe how the variables and observations are organised in
+    each of the sample tables.
+
+In `table1`, each variable has its own column, each observation its own row, and each value its own cell. Therefore, `table1` is a tidy dataset.
+
+In `table2` the `cases` and `population` do not have their own columns, but rather, are treated as values. `table3` does not have the `cases` and `population` variables stored separately. Instead, both are stored as part of a calculation under `rate`. `table4a` stores the values of the `year` variable as separate variables (with their own columns), with the values being the number of cases (population is missing). `table 4b` is similar, but uses `population` for the values rather than `cases`.
+
+2.  Compute the `rate` for `table2`, and `table4a` + `table4b`. 
+    You will need to perform four operations:
+
+    1.  Extract the number of TB cases per country per year.
+    2.  Extract the matching population per country per year.
+    3.  Divide cases by population, and multiply by 10000.
+    4.  Store back in the appropriate place.
+    
+    Which representation is easiest to work with? Which is hardest? Why?
+    
+Extract the number of TB cases per country per year:
+
+```{r}
+table2_cases <- filter(table2, type == "cases")[["count"]]
+```
+
+Extract the matching population per country per year:
+
+```{r}
+table2_population <- filter(table2, type == "population")[["count"]]
+```
+
+Divide cases by population, and multiply by 10000:
+
+```{r}
+table2_rate <- table2_cases / table2_population * 10000
+```
+
+Store back in the appropriate place:
+
+```{r}
+table2_country <- filter(table2, type == "cases")[["country"]]
+table2_year <- filter(table2, type == "cases")[["year"]]
+
+table2_new <- tibble(
+  country = table2_country,
+  year = table2_year,
+  cases = table2_cases,
+  population = table2_population,
+  rate = table2_rate
+  )
+table2_new
+```
+
+For `table4a` and `table4b`:
+
+```{r}
+table4_new <- tibble(
+  country = table4a[["country"]],
+  `1999` = table4a[["1999"]] / table4b[["1999"]] * 10000,
+  `2000` = table4a[["2000"]] / table4b[["2000"]] * 10000
+  )
+table4_new
+```
+
+3.  Recreate the plot showing change in cases over time using `table2`
+    instead of `table1`. What do you need to do first?
+
+Filter `cases`:
+
+```{r}
+table2 %>%
+  filter(type == "cases") %>% 
+  ggplot(aes(year, count, group = country, colour = country)) +
+    geom_line() +
+    geom_point()
+```
+
+## 12.3.3 Exercises
+
+1.  Why are `gather()` and `spread()` not perfectly symmetrical?  
+    Carefully consider the following example:
+    
+    ```{r, results = 'hide'}
+    stocks <- tibble(
+      year   = c(2015, 2015, 2016, 2016),
+      half  = c(   1,    2,     1,    2),
+      return = c(1.88, 0.59, 0.92, 0.17)
+    )
+    stocks %>% 
+      spread(year, return) %>% 
+      gather("year", "return", `2015`:`2016`)
+    ```
+    
+    (Hint: look at the variable types and think about column _names_.)
+    
+    Both `spread()` and `gather()` have a `convert` argument. What does it 
+    do?
+
+`gather()` and `spread()` are not perfectly symmetrical because variable type is not retained when using both functions, as seen in the example above. In `stocks`, `year` is numeric:
+
+```{r}
+stocks %>% select(year)
+```
+
+However, after using the `spread()` and `gather()` functions it becomes `character`:
+
+```{r}
+stocks %>% 
+  spread(year, return) %>% 
+  gather("year", "return", `2015`:`2016`) %>% 
+  select(year)
+```
+
+The `convert` argument, when set to `TRUE`, will retain numeric, integer, or logical column types when using `spread()` or `gather()`.
+
+2.  Why does this code fail?
+
+    ```{r, error = TRUE}
+    table4a %>% 
+      gather(1999, 2000, key = "year", value = "cases")
+    ```
+
+"1999" and "2000" are non-syntactic names so they have to be surrounded by backticks.
+
+```{r}
+table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+```
+
+3.  Why does spreading this tibble fail? How could you add a new column to fix
+    the problem?
+
+    ```{r}
+    people <- tribble(
+      ~name,             ~key,    ~value,
+      #-----------------|--------|------
+      "Phillip Woods",   "age",       45,
+      "Phillip Woods",   "height",   186,
+      "Phillip Woods",   "age",       50,
+      "Jessica Cordero", "age",       37,
+      "Jessica Cordero", "height",   156
+    )
+    ```
+
+```{r, error = TRUE}
+people %>% spread(key, value)
+```
+
+Phillip Woods' age has been entered twice. You could add a new column that indicates the time of observation:
+
+```{r}
+people <- tribble(
+  ~name,             ~key,    ~value, ~time,
+  #-----------------|--------|------|-------
+  "Phillip Woods",   "age",       45, 1,
+  "Phillip Woods",   "height",   186, 1,
+  "Phillip Woods",   "age",       50, 2,
+  "Jessica Cordero", "age",       37, 1,
+  "Jessica Cordero", "height",   156, 1
+)
+```
+
+```{r}
+people %>% spread(key, value)
+```
+
+4.  Tidy the simple tibble below. Do you need to spread or gather it?
+    What are the variables?
+
+    ```{r}
+    preg <- tribble(
+      ~pregnant, ~male, ~female,
+      "yes",     NA,    10,
+      "no",      20,    12
+    )
+    ```
+
+It needs to be gathered. The variables are sex (male or female) and pregnant (yes or no).
+
+```{r}
+preg %>% gather(
+  male, female,
+  key = "sex",
+  value = "count"
+)
+```
+
+## 12.4.3 Exercises
+
+1.  What do the `extra` and `fill` arguments do in `separate()`? 
+    Experiment with the various options for the following two toy datasets.
+
+    ```{r, eval = FALSE}
+    tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+      separate(x, c("one", "two", "three"))
+    
+    tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% 
+      separate(x, c("one", "two", "three"))
+    ```
+
+`extra` controls what happens when you use a character vector in `sep` and there are too many pieces.
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "merge")
+```
+
+In comparison, `fill` controls what happens when there are not enough pieces.
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% 
+  separate(x, c("one", "two", "three"), fill = "left")
+```
+
+2.  Both `unite()` and `separate()` have a `remove` argument. What does it
+    do? Why would you set it to `FALSE`?
+
+It removes the input column from the data frame. By setting this to `FALSE`, you can retain the original input column in the dataset:
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f", "g,h,i")) %>% 
+  separate(x, c("one", "two", "three"), remove = "FALSE")
+```
+
+3.  Compare and contrast `separate()` and `extract()`.  Why are there
+    three variations of separation (by position, by separator, and with
+    groups), but only one unite?
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f", "g,h,i")) %>% 
+  separate(x, c("one", "two", "three"))
+
+tibble(x = c("a,b,c", "d,e,f", "g,h,i"))
+
+tibble(x = c("a,b,c", "d,e,f", "g,h,i")) %>% 
+  extract(x, "A")
+```
+
+`separate()` pulls apart one column and places the values into many columns. `extract()` is a similar function, but, as its name implies, only retains values you wish to extract from a data frame.
+
+`unite()` only requires one variation of separation because it is combining multiple columns into one column. Therefore, there is only one way to do it (using `sep`). In comparison, there are multiple ways to split a character string for `separate()` (e.g., by position or by separator).
+
+## 12.5.1 Exercises
+
+1.  Compare and contrast the `fill` arguments to `spread()` and `complete()`.
+
+For `spread()`, `fill` will replace missing values in a data set with this value. In comparison, the `fill` argument for `complete()` allows you to replace missing values by column name.
+
+2.  What does the direction argument to `fill()` do?
+
+It is the direction in which to fill missing values. For example:
+
+```{r}
+df <- data.frame(Month = 1:12, Year = c(NA, 2000, rep(NA, 10)))
+df %>% fill(Year, .direction = c("up"))
+```
+
+## 12.6.1 Exercises
+
+1.  In this case study I set `na.rm = TRUE` just to make it easier to
+    check that we had the correct values. Is this reasonable? Think about
+    how missing values are represented in this dataset. Are there implicit
+    missing values? What's the difference between an `NA` and zero? 
+    
+I think this is reasonable. Missing values appear to be represented explicitely in this dataset:
+    
+```{r}
+who %>%
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases") %>% 
+  count(is.na(cases))
+```
+
+There are over 76,000 `NA` values for `cases`.
+    
+It is difficult to determine whether there are implicit missing values in a dataset because, as stated earlier in the chapter, implicit missing values are an "absence of a presence".
+    
+`NA` indicates an explicit missing value. So, the number of actual cases for an `NA` observation is not necessarily zero. In comparison, a value of zero indicates there were no cases for a particular observation.
+    
+```{r}
+who %>%
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases") %>% 
+  filter(cases == 0) %>% 
+  nrow()
+```
+    
+2.  What happens if you neglect the `mutate()` step?
+    (`mutate(key = stringr::str_replace(key, "newrel", "new_rel"))`)
+    
+```{r}
+who %>%
+  gather(code, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
+  separate(code, c("new", "var", "sexage")) %>% 
+  select(-new, -iso2, -iso3) %>% 
+  separate(sexage, c("sex", "age"), sep = 1)
+```
+    
+It won't split the string `newrel` properly.
+    
+```{r}
+split_problem <- who %>%
+  gather(code, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
+  separate(code, c("new", "var", "sexage")) %>% 
+  select(-new, -iso2, -iso3) %>% 
+  separate(sexage, c("sex", "age"), sep = 1)
+```
+
+```{r}
+split_problem %>% slice(73467:73486)
+```
+
+For relapse cases, gender and age group have not separated (they appear under `var`), and `sex` and `age` variables are `NA`.
+
+3.  I claimed that `iso2` and `iso3` were redundant with `country`. 
+    Confirm this claim.
+
+For each country, there is only one unique combination of `iso2` and `iso3`:
+
+```{r}
+who %>% 
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE) %>% 
+  select(country, iso2, iso3) %>% 
+  distinct() %>% 
+  group_by(country) %>% 
+  filter(n() > 1)
+```
+    
+4.  For each country, year, and sex compute the total number of cases of 
+    TB. Make an informative visualisation of the data.
+    
+```{r}
+who_cases <- who %>%
+  gather(code, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
+  mutate(code = stringr::str_replace(code, "newrel", "new_rel")) %>%
+  separate(code, c("new", "var", "sexage")) %>% 
+  select(-new, -iso2, -iso3) %>% 
+  separate(sexage, c("sex", "age"), sep = 1) %>% 
+  group_by(country, year, sex) %>% 
+  summarise(cases = sum(value))
+
+who_cases
+```
+
+```{r}
+who_cases %>% 
+  group_by(sex, year) %>%
+  filter(year > 1995) %>% 
+  summarise(cases_total = sum(cases)) %>%
+  ggplot(aes(x = year, y = cases_total, group = sex, colour = sex)) +
+    geom_line()
+```
+
+# 13. Relational data
+
+```{r, include = FALSE}
+library(maps)
+```
+
+## 13.2.1 Exercises
+
+1.  Imagine you wanted to draw (approximately) the route each plane flies from
+    its origin to its destination. What variables would you need? What tables
+    would you need to combine?
+    
+From `flights`, you would need `origin` and `dest`. From `airports`, `lat`, `lon` (the locations of the airport), and maybe `alt` would be required. You would need to combine the `flights` and `airports` tables to get the origin airport and destination airport.
+
+The `weather` table may also be helpful as wind speed, wind direction, and visibility may affect the route.
+
+2.  I forgot to draw the relationship between `weather` and `airports`.
+    What is the relationship and how should it appear in the diagram?
+    
+`weather` connects to `airports` via `origin` (the location). In the diagram, there should be an arrow pointing from `faa` in the `airports` table to `origin` in the `weather` table.
+
+3.  `weather` only contains information for the origin (NYC) airports. If
+    it contained weather records for all airports in the USA, what additional
+    relation would it define with `flights`?
+    
+`year`, `month`, `day`, and `hour`.
+
+4.  We know that some days of the year are "special", and fewer people than
+    usual fly on them. How might you represent that data as a data frame?
+    What would be the primary keys of that table? How would it connect to the
+    existing tables?
+
+You would have date and name variables. The primary key of this table would be date. It would match to `year`, `month`, and `day` in other tables such as `flights`.
+
+## 13.3.1 Exercises
+
+1.  Add a surrogate key to `flights`.
+
+```{r}
+flights %>% 
+  arrange(year, month, day, sched_dep_time) %>% 
+  mutate(flight_id = row_number())
+```
+
+2.  Identify the keys in the following datasets
+
+    1.  `Lahman::Batting`,
+    2.  `babynames::babynames`
+    3.  `nasaweather::atmos`
+    4.  `fueleconomy::vehicles`
+    5.  `ggplot2::diamonds`
+    
+    (You might need to install some packages and read some documentation.)
+    
+`Lahman::Batting`:
+
+The primary keys for `Lahman::Batting` are `playerID`, `yearID`, and `stint`.
+
+```{r}
+Lahman::Batting %>% 
+  count(playerID, yearID, stint) %>% 
+  filter(n > 1)
+```
+
+`playerID` is a foreign key (it is the primary key for `Lahman::Master`).
+
+`babynames::babynames`:
+
+The primary keys for `babynames::babynames` are `year`, `sex`, and `name`.
+
+```{r}
+babynames::babynames %>%
+  group_by(year, sex, name) %>%
+  filter(n() > 1)
+```
+
+`nasaweather::atmos`:
+
+For `nasaweather:atmos`, the primary keys are `lat`, `long`, `year`, 
+and `month`.
+
+```{r}
+nasaweather::atmos %>% 
+  group_by(lat, long, year, month) %>% 
+  filter(n() > 1)
+```
+
+`fueleconomy::vehicles`:
+
+The primary key for `fueleconomy::vehicles` is `id`.
+
+```{r}
+fueleconomy::vehicles %>% 
+  count(id) %>% 
+  filter(n > 1)
+```
+
+`ggplot2::diamonds`:
+
+`ggplot2::diamonds` does not appear to have a primary key.
+
+```{r}
+ggplot2::diamonds %>% 
+  group_by(carat, cut, color, clarity, depth, table, price, x, y, z) %>% 
+  filter(n() > 1) %>% 
+  nrow()
+```
+
+3.  Draw a diagram illustrating the connections between the `Batting`,
+    `Master`, and `Salaries` tables in the Lahman package. Draw another diagram
+    that shows the relationship between `Master`, `Managers`, `AwardsManagers`.
+
+    How would you characterise the relationship between the `Batting`,
+    `Pitching`, and `Fielding` tables?
+    
+## 13.4.6 Exercises
+
+1.  Compute the average delay by destination, then join on the `airports`
+    data frame so you can show the spatial distribution of delays. Here's an
+    easy way to draw a map of the United States:
+
+    ```{r, eval = FALSE}
+    airports %>%
+      semi_join(flights, c("faa" = "dest")) %>%
+      ggplot(aes(lon, lat)) +
+        borders("state") +
+        geom_point() +
+        coord_quickmap()
+    ```
+
+    (Don't worry if you don't understand what `semi_join()` does --- you'll
+    learn about it next.)
+
+    You might want to use the `size` or `colour` of the points to display
+    the average delay for each airport.
+    
+```{r}
+dest_delay <- flights %>% 
+  group_by(dest) %>% 
+  summarise(avg_delay = mean(arr_delay, na.rm = TRUE))
+
+dest_delay %>% 
+  left_join(airports, c("dest" = "faa")) %>% 
+  ggplot(aes(lon, lat)) +
+    borders("state") +
+    geom_point(aes(colour = avg_delay)) +
+    coord_quickmap()
+```
+
+2.  Add the location of the origin _and_ destination (i.e. the `lat` and `lon`)
+    to `flights`.
+    
+```{r}
+flights %>% 
+  left_join(airports, c("origin" = "faa")) %>% 
+  left_join(airports, c("dest" = "faa")) %>% 
+  rename(lat_origin = lat.x, lon_origin = lon.x) %>%
+  rename(lat_dest = lat.y, lon_dest = lon.y) %>% 
+  select(-contains("."))
+```
+
+3.  Is there a relationship between the age of a plane and its delays?
+
+```{r}
+planes_avg_delay <- planes %>% 
+  select(tailnum, year) %>% 
+  left_join(flights, "tailnum") %>% 
+  group_by(tailnum, year.x) %>%
+  rename(year = year.x) %>% 
+  summarise(avg_delay = mean(arr_delay, na.rm = TRUE))
+
+ggplot(planes_avg_delay, aes(year, avg_delay)) +
+  geom_point() +
+  geom_smooth()
+```
+
+It appears not.
+
+4.  What weather conditions make it more likely to see a delay?
+
+I think rain and low visibility would increase the likelihood of delay.
+
+```{r}
+flights_weather <- flights %>% 
+  inner_join(weather, c("origin", "year", "month", "day", "hour"))
+
+flights_weather %>% 
+  group_by(visib) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ggplot(aes(visib, avg_delay)) + 
+    geom_point() +
+    geom_line() +
+    geom_smooth(method = lm, se = FALSE)
+```
+
+As visibility increases, the average delay decreases.
+
+```{r}
+flights_weather %>% 
+  group_by(precip) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ggplot(aes(precip, avg_delay)) + 
+    geom_point() +
+    geom_line() +
+    geom_smooth(method = lm, se = FALSE)
+```
+
+The relationship between rainfall and average delay is less clear.
+
+5.  What happened on June 13 2013? Display the spatial pattern of delays,
+    and then use Google to cross-reference with the weather.
+    
+There were a large series of storms in the south-east.
+
+    ```{r, eval = FALSE, include = FALSE}
+    worst <- filter(flights, !is.na(dep_time), month == 6, day == 13)
+    worst %>%
+      group_by(dest) %>%
+      summarise(delay = mean(arr_delay), n = n()) %>%
+      filter(n > 5) %>%
+      inner_join(airports, by = c("dest" = "faa")) %>%
+      ggplot(aes(lon, lat)) +
+        borders("state") +
+        geom_point(aes(size = n, colour = delay)) +
+        coord_quickmap()
+    ```
+    
+```{r}
+flights %>% 
+  filter(month == 6, day == 13) %>% 
+  group_by(hour) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+By mid-morning there were significant delays. This continued into the evening.
+
+```{r}
+flights %>% 
+  filter(month == 6, day == 13) %>% 
+  group_by(dest) %>% 
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  inner_join(airports, by = c("dest" = "faa")) %>%
+    ggplot(aes(lon, lat)) +
+      borders("state") +
+      geom_point(aes(colour = avg_delay, size = avg_delay)) +
+      coord_quickmap()
+```
+
+## 13.5.1 Exercises
+
+1.  What does it mean for a flight to have a missing `tailnum`? What do the
+    tail numbers that don't have a matching record in `planes` have in common?
+    (Hint: one variable explains ~90% of the problems.)
+    
+```{r}
+flights %>% 
+  anti_join(planes, by = "tailnum")
+```
+
+Many of the flights without a tail number in `planes` appear to be American Airlines (`AA`) or Envoy Air (`MQ`).
+    
+```{r}
+flights %>% 
+  anti_join(planes, by = "tailnum") %>% 
+  group_by(carrier) %>% 
+  summarise(count = n())
+```
+
+```{r}
+flights %>% 
+  anti_join(planes, by = "tailnum") %>% 
+  nrow()
+```
+
+Specifically, about 90% of flights.
+
+2.  Filter flights to only show flights with planes that have flown at least 100
+    flights.
+    
+```{r}
+flights_100 <- flights %>% 
+  group_by(tailnum) %>% 
+  count() %>% 
+  filter(n >= 100 & tailnum != "NA") %>% 
+  arrange(desc(n))
+
+flights %>% 
+  semi_join(flights_100, by = "tailnum")
+```
+
+3.  Combine `fueleconomy::vehicles` and `fueleconomy::common` to find only the
+    records for the most common models.
+    
+```{r}
+fueleconomy::vehicles %>% 
+  semi_join(fueleconomy::common, by = c("make", "model"))
+
+```
+
+4.  Find the 48 hours (over the course of the whole year) that have the worst
+    delays. Cross-reference it with the `weather` data. Can you see any
+    patterns?
+    
+5.  What does `anti_join(flights, airports, by = c("dest" = "faa"))` tell you?
+    What does `anti_join(airports, flights, by = c("faa" = "dest"))` tell you?
+    
+```{r}
+anti_join(flights, airports, by = c("dest" = "faa"))
+```
+
+The destination of these flights is unknown (i.e., the airport does not appear in `airports`). They could be international flights.
+
+```{r}
+anti_join(airports, flights, by = c("faa" = "dest"))
+```
+
+These are the destination airports for all flights that departed NYC in 2013.
+
+6.  You might expect that there's an implicit relationship between plane
+    and airline, because each plane is flown by a single airline. Confirm
+    or reject this hypothesis using the tools you've learned above.
+    
+```{r}
+flights_carrier <- flights %>% 
+  group_by(tailnum, carrier) %>% 
+  count() %>% 
+  arrange(tailnum)
+flights_carrier
+
+flights_carrier %>% 
+  group_by(tailnum) %>% 
+  count() %>% 
+  filter(nn > 1)
+```
+
+There are a number of planes that have been flown by multiple airlines. However, the majority of planes have had a single airline.
+
+# 14. Strings.
+
+To come...
+
+# 15. Factors
+
+```{r, include = FALSE}
+library(forcats)
+```
+
+## 15.3.1 Exercises
+
+1.  Explore the distribution of `rincome` (reported income). What makes the
+    default bar chart hard to understand? How could you improve the plot?
+    
+```{r}
+summary(gss_cat$rincome)
+```
+
+```{r}
+ggplot(gss_cat, aes(rincome)) +
+  geom_bar()
+```
+
+This plot can be improved by rotating the labels on the x-axis:
+
+```{r}
+ggplot(gss_cat, aes(rincome)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 35, hjust = 1))
+```
+
+It would also be better if the categories on the x-axis were ordered from smallest to largest. To do this, you would have to modify the order of the factor levels. The following categories can also be combined: "No answer", "Don't know", "Refused", and "Not applicable".
+
+2.  What is the most common `relig` in this survey? What's the most
+    common `partyid`?
+
+```{r}
+gss_cat %>% 
+  count(relig) %>% 
+  arrange(desc(n)) %>% 
+  head(1)
+
+gss_cat %>% 
+  count(partyid) %>% 
+  arrange(desc(n)) %>% 
+  head(1)
+```
+
+"Protestant"" is the most common religion.
+
+The most common party affiliation is "Independent".
+
+3.  Which `relig` does `denom` (denomination) apply to? How can you find
+    out with a table? How can you find out with a visualisation?  
+    
+```{r}
+levels(gss_cat$denom)
+
+no_denom <- gss_cat %>%
+  filter(!denom %in% c("No answer", "Don't know", "No denomination", "Not applicable", "Refused"))
+```
+
+```{r}
+no_denom %>% 
+  count(relig)
+```
+
+```{r}
+ggplot(no_denom, aes(relig, denom)) +
+  geom_count(aes(colour = ..n.., size = ..n..)) +
+  guides(colour = 'legend')
+```
+
+Denomination applies to "Protestant".
+
+## 15.4.1 Exercises
+
+1.  There are some suspiciously high numbers in `tvhours`. Is the mean a good
+    summary?
+    
+```{r}
+summary(gss_cat$tvhours)
+
+ggplot(gss_cat, aes(tvhours)) +
+  geom_bar()
+
+gss_cat %>% 
+  count(tvhours) %>% 
+  arrange(desc(tvhours))
+```
+
+It is unlikely that people are watching 24 hours of tv per day. As seen in the bar plot, `tvhours` is skewed to the right due to the presence of these extreme values. The median would be a better summary of the data, because, unlike the mean, it is largely unaffected by outliers.
+
+2.  For each factor in `gss_cat` identify whether the order of the levels is
+    arbitrary or principled.
+
+```{r}
+glimpse(gss_cat)
+
+levels(gss_cat$marital)
+levels(gss_cat$rincome)
+```
+
+`marital`, `race` `partyid`, `relig`, and `denom` are arbitrary (i.e., nominal). `rincome` is principled (i.e., ordinal).
+
+3.  Why did moving "Not applicable" to the front of the levels move it to the
+    bottom of the plot?
+    
+```{r}
+rincome_summary <- gss_cat %>%
+  group_by(rincome) %>%
+  summarise(
+    age = mean(age, na.rm = TRUE),
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n()
+  )
+
+ggplot(rincome_summary, aes(age, fct_relevel(rincome, "Not applicable"))) +
+  geom_point()
+```
+
+Because `fct_relevel` gives "Not applicable" an integer value of 1:
+
+```{r}
+rincome_levels <- fct_relevel(rincome_summary$rincome, "Not applicable")
+levels(rincome_levels)
+```
+
+## 15.5.1 Exercises
+
+1.  How have the proportions of people identifying as Democrat, Republican, and
+    Independent changed over time?
+    
+```{r}
+partyid_clean <- gss_cat %>%
+  mutate(partyid = fct_collapse(
+    partyid,
+    other = c("No answer", "Don't know", "Other party"),
+    rep = c("Strong republican", "Not str republican"),
+    ind = c("Ind,near rep", "Independent", "Ind,near dem"),
+    dem = c("Not str democrat", "Strong democrat")
+  ))
+
+partyid_counts <- partyid_clean %>% 
+  count(year, partyid) %>% 
+  group_by(year) %>% 
+  mutate(prop = n / sum(n))
+
+ggplot(partyid_counts, aes(x = year, y = prop, colour = fct_reorder2(
+  partyid, year, prop
+))) +
+  geom_point() +
+  geom_line() +
+  labs(colour = "partyid")
+```
+    
+There appears to be less people identifying as Republican over time. In comparison, the proportion of people identifying as Independent appears to be increasing, while the number of Democrats appear about the same.
+
+There is also a slight increase in the number of people identifying as Other since around 2005.
+
+2.  How could you collapse `rincome` into a small set of categories?
+
+```{r}
+gss_cat %>% 
+  count(rincome)
+```
+
+```{r}
+gss_cat %>%
+  mutate(rincome = fct_lump(rincome, n = 5)) %>%
+  count(rincome, sort = TRUE) %>%
+  mutate(rincome = fct_recode(
+    rincome,
+    "Less than $10000" = "Other"
+  ))
+```
+
+# 16. Dates and times
+
+```{r, include = FALSE}
+library(lubridate)
+library(nycflights13)
+library(forcats)
+```
+
+## 16.2.4 Exercises
+
+1.  What happens if you parse a string that contains invalid dates?
+
+    ```{r, eval = FALSE}
+    ymd(c("2010-10-10", "bananas"))
+    ```
+    
+The invalid dates will be `NA`.
+
+2.  What does the `tzone` argument to `today()` do? Why is it important?
+
+`tzone` specifies which time zone you would like to find the current date of.
+
+3.  Use the appropriate lubridate function to parse each of the following dates:
+
+    ```{r}
+    d1 <- "January 1, 2010"
+    d2 <- "2015-Mar-07"
+    d3 <- "06-Jun-2017"
+    d4 <- c("August 19 (2015)", "July 1 (2015)")
+    d5 <- "12/30/14" # Dec 30, 2014
+    ```
+
+```{r}
+mdy(d1)
+ymd(d2)
+dmy(d3)
+mdy(d4)
+mdy(d5)
+```
+
+## 16.3.4 Exercises
+
+1.  How does the distribution of flight times within a day change over the 
+    course of the year?
+    
+```{r, include = FALSE}
+make_datetime_100 <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100)
+}
+
+flights_dt <- flights %>% 
+  filter(!is.na(dep_time), !is.na(arr_time)) %>% 
+  mutate(
+    dep_time = make_datetime_100(year, month, day, dep_time),
+    arr_time = make_datetime_100(year, month, day, arr_time),
+    sched_dep_time = make_datetime_100(year, month, day, sched_dep_time),
+    sched_arr_time = make_datetime_100(year, month, day, sched_arr_time)
+  ) %>% 
+  select(origin, dest, ends_with("delay"), ends_with("time"))
+```
+
+
+```{r}
+flights_dt %>% 
+  mutate(hour = hour(dep_time), month = factor(month(dep_time))) %>% 
+  group_by(hour, month) %>% 
+  summarise(
+    n = n()
+  ) %>% 
+  ggplot(aes(x = hour, y = n, colour = month)) +
+    geom_line()
+```
+
+For the first day of each month it looks about the same.
+    
+2.  Compare `dep_time`, `sched_dep_time` and `dep_delay`. Are they consistent?
+    Explain your findings.
+
+3.  Compare `air_time` with the duration between the departure and arrival.
+    Explain your findings. (Hint: consider the location of the airport.)
+    
+4.  How does the average delay time change over the course of a day?
+    Should you use `dep_time` or `sched_dep_time`? Why?
+
+5.  On what day of the week should you leave if you want to minimise the
+    chance of a delay?
+    
+```{r}
+flights_dt %>% 
+  mutate(day = wday(sched_dep_time, label = TRUE)) %>% 
+  group_by(day) %>% 
+  summarise(dep_delay = mean(dep_delay)) %>%
+  ggplot(aes(day, dep_delay)) +
+    geom_col()
+```
+    
+Saturday.
+
+6.  What makes the distribution of `diamonds$carat` and 
+    `flights$sched_dep_time` similar?
+
+7.  Confirm my hypothesis that the early departures of flights in minutes
+    20-30 and 50-60 are caused by scheduled flights that leave early. 
+    Hint: create a binary variable that tells you whether or not a flight 
+    was delayed.
