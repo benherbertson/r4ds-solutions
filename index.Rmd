@@ -1,7 +1,7 @@
 ---
 title: "R for Data Science Exercise Solutions"
 author: "Ben Herbertson"
-date: "Updated 2018-03-09"
+date: "Updated 23 Apr 2018"
 output:
   rmdformats::html_clean
 ---
@@ -2193,7 +2193,7 @@ No exercises.
 1.  Why is `TRUE` not a parameter to `rescale01()`? What would happen if
     `x` contained a single missing value, and `na.rm` was `FALSE`?
     
-Because it is not an input. The function takes only one input (`x`) for the calculation. `na.rm` specifies whether `NA` values should be removed or not prior to calculation.
+Because it is not an input. The function takes only one input (`x`) for computing. `na.rm` specifies whether `NA` values should be removed or not prior to the calculation.
 
 ```{r}
 rescale01 <- function(x) {
@@ -2204,7 +2204,7 @@ rescale01 <- function(x) {
 rescale01(c(0, 5))
 ```
 
-So far, so good.
+So far so good.
 
 ```{r}
 rescale01 <- function(x) {
@@ -2221,18 +2221,18 @@ When `na.rm` is `FALSE`, `NA` values are contagious.
     unchanged. Rewrite `rescale01()` so that `-Inf` is mapped to 0, and 
     `Inf` is mapped to 1.
     
-```{r, include = FALSE}
+```{r}
 x <- c(1:10, Inf)
 
-rescale01 <- function(x) {
+rescale01_remapped <- function(x) {
   rng <- range(x, na.rm = TRUE, finite = TRUE)
-  (x - rng[1]) / (rng[2] - rng[1])
+  y <- (x - rng[1]) / (rng[2] - rng[1])
+  y[y == -Inf] <- 0
+  y[y == Inf] <- 1
+  y
 }
 
-rescale01_remapped <- function(x) {
-  rng <- range(x, na.rm = TRUE, finite = TRUE, Inf == 1, -Inf == 0)
-  (x - rng[1]) / (rng[2] - rng[1])
-}
+rescale01_remapped(x)
 ```
 
 3.  Practice turning the following code snippets into functions. Think about 
@@ -2306,8 +2306,33 @@ coeff_var(x)
 4.  Follow <http://nicercode.github.io/intro/writing-functions.html> to 
     write your own functions to compute the variance and skew of a numeric 
     vector.
-    
-The equations on this website do not render properly.
+
+```{r}
+# Variance
+x <- sample(1:100, 100, replace = TRUE)
+
+sample_var <- function(x){
+n <- length(x)
+m <- mean(x)
+(1 / (n - 1)) * sum((x - m) ^ 2)
+}
+sample_var(x)
+# Computes the same result as the built-in function:
+var(x)
+```
+
+```{r}
+# Skew
+x <- sample(1:100, 100, replace = TRUE)
+
+skew <- function(x){
+  n <- length(x)
+  m <- mean(x)
+  sd <- sd(x)
+(1 / n) * sum(x - m) ^ 3 / sd ^ 3
+}
+skew(x)
+```
 
 5.  Write `both_na()`, a function that takes two vectors of the same length 
     and returns the number of positions that have an `NA` in both vectors.
@@ -2342,6 +2367,24 @@ is_readable("index.html")
     Extend the initial piping example to recreate the complete song, and use 
     functions to reduce the duplication.
     
+```{r, eval=FALSE}
+foo_foo_mischief <- function(x){
+foo_foo %>%
+  hop(through = forest) %>%
+  scoop(up = field_mouse) %>%
+  bop(on = head)
+}
+
+foo_foo_mischief()
+good_fairy %>% 
+  says("Little bunny Foo Foo
+        I don't want to see you
+        Scooping up the field mice
+        And bopping them on the head.
+        I'll give you three chances,
+        And if you don't stop, I'll turn you into a GOON!")
+```
+
 ## 19.3.1 Exercises
 
 1.  Read the source code for each of the following three functions, puzzle out
