@@ -2416,6 +2416,42 @@ substr("hello world", 1, nchar("hello"))
 "hello" == "hello"
 ```
 
+A better name for this function might be: 
+
+```{r}
+check_prefix <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}
+```
+
+The second function removes the last observation in a vector (this doesn't necessarily have to be an integer). For example:
+
+```{r}
+remove_last <- function(x) {
+  if (length(x) <= 1) return(NULL)
+  x[-length(x)]
+}
+
+x <- sample(1:10, 10, replace = TRUE)
+y <- c("hello", "world")
+
+remove_last(x)
+remove_last(y)
+```
+
+The last function replicates the values in y based on the length of x.
+
+```{r}
+repeat_values <- function(x, y) {
+  rep(y, length.out = length(x))
+}
+
+x <- c(1, 3, 5, 3)
+y <- c("hello", "world")
+
+repeat_values(x, y)
+```
+
 2.  Take a function that you've written recently and spend 5 minutes 
     brainstorming a better name for it and its arguments.
     
@@ -2435,10 +2471,12 @@ df
 3.  Compare and contrast `rnorm()` and `MASS::mvrnorm()`. How could you make
     them more consistent?
 
-`rnorm()` produces random numbers that are normally distributed, with a mean equal to 0 and a standard deviation equal to 1. In comparison, `MASS::mvrnorm()` produces samples from a multivariate normal distribution. 
+`rnorm()` produces random numbers that are normally distributed with a mean equal to 0 and a standard deviation equal to 1. In comparison, `MASS::mvrnorm()` produces samples from a multivariate normal distribution. To make them more consistent, they should use the same argument names. For example, `MASS::mvrnorm()` uses `mu`, where as `rnorm()` uses `mean`. Using consistent names between the functions would make them easier to use.
     
 4.  Make a case for why `norm_r()`, `norm_d()` etc would be better than
     `rnorm()`, `dnorm()`. Make a case for the opposite.
+    
+Using `norm_r()`, `norm_d()` instead of  `rnorm()`, `dnorm()` would be better because it would group the functions related to the normal distribution. In comparison, using `rnorm()`, `dnorm()` could be better because it groups them by actions. For example, `r*` functions involve sampling from distributions.
     
 ## 19.4.4 Exercises
 
