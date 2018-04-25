@@ -1,7 +1,7 @@
 ---
 title: "R for Data Science Exercise Solutions"
 author: "Ben Herbertson"
-date: "Updated 23 Apr 2018"
+date: "Updated 25 Apr 2018"
 output:
   rmdformats::html_clean
 ---
@@ -15,14 +15,6 @@ library(tidyverse)
 ```
 
 ---
-
-# 1. Introduction
-
-No exercises.
-
-# 2. Introduction
-
-No exercises.
 
 # 3. Data visualisation
 
@@ -940,10 +932,6 @@ The plot is difficult to read because there are many destinations on the y-axis.
 The larger counts are located in the top left which makes it more readable.
 
 # 8. Workflow: projects
-
-No exercises.
-
-# 9 Introduction
 
 No exercises.
 
@@ -2178,14 +2166,6 @@ Saturday.
     Hint: create a binary variable that tells you whether or not a flight 
     was delayed.
     
-# 17. Introduction
-
-No exercises.
-
-# 18. Pipes
-
-No exercises.
-
 # 19. Functions
 
 ## 19.2.1 Practice
@@ -2642,10 +2622,6 @@ random_normals
     
 Preallocated loops perform increasingly better as inputs increase in size.
     
-# 26. Introduction
-
-No exercises.
-
 # 27. R Markdown
 
 ## 27.2.1 Exercises
