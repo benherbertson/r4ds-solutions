@@ -2462,11 +2462,46 @@ Using `norm_r()`, `norm_d()` instead of  `rnorm()`, `dnorm()` would be better be
 
 1.  What's the difference between `if` and `ifelse()`? Carefully read the help
     and construct three examples that illustrate the key differences.
+    
+`ifelse()` returns a vector of the same length as `test` filled with elements from the `yes` or `no` argument, depending on whether the test is `TRUE` or `FALSE`.
+
+```{r}
+y <- sample(1:10, 10, replace = TRUE)
+x <- ifelse(y < 5, "Too low", "Too high")
+x
+```
+
+In comparison, `if` will return one value only because the condition only works with a length-one logical vector.
+
+```{r}
+y <- sample(1:10, 10, replace = TRUE)
+x <- if (y < 20) "Too low" else "Too high"
+x
+
+y <- 10
+x <- if (y < 20) "Too low" else "Too high"
+x
+```
 
 2.  Write a greeting function that says "good morning", "good afternoon",
     or "good evening", depending on the time of day. (Hint: use a time
     argument that defaults to `lubridate::now()`. That will make it 
     easier to test your function.)
+    
+```{r}
+greeting <- function(time = lubridate::now()) {
+  hour <- hour(time)
+  if (hour > 0 && hour < 12) {
+      "good morning"
+    } else if (hour >= 12 & hour < 18) {
+      "good afternoon"
+    } else {
+      "good evening"
+    }
+}
+
+greeting()
+```
 
 3.  Implement a `fizzbuzz` function. It takes a single number as input. If
     the number is divisible by three, it returns "fizz". If it's divisible by
@@ -2474,6 +2509,26 @@ Using `norm_r()`, `norm_d()` instead of  `rnorm()`, `dnorm()` would be better be
     "fizzbuzz". Otherwise, it returns the number. Make sure you first write 
     working code before you create the function.
     
+```{r}
+fizzbuzz <- function(x) {
+  if (x %% 3 == 0 && x %% 5 == 0) {
+    "fizzbuzz"
+  } else if (x %% 3 == 0) {
+    "fizz"
+  } else if (x %% 5 == 0) {
+    "buzz"
+  } else {
+    x
+  }
+}
+
+# Test function
+fizzbuzz(15)
+fizzbuzz(3)
+fizzbuzz(5)
+fizzbuzz(2)
+```
+
 4.  How could you use `cut()` to simplify this set of nested if-else statements?
 
     ```{r, eval = FALSE}
@@ -2494,7 +2549,40 @@ Using `norm_r()`, `norm_d()` instead of  `rnorm()`, `dnorm()` would be better be
     What is the other chief advantage of `cut()` for this problem? (Hint:
     what happens if you have many values in `temp`?)
 
+`cut()` divides the values of a numeric vector into intervals and recodes these values according to which interval they fall.
+
+```{r}
+x <- 1:10
+cut(x, breaks = c(1, 6, 10), include.lowest = TRUE, right = FALSE)
+```
+
+To simplify the example, you can replace the nested if-else statements with `cut()`:
+
+```{r}
+temp <- seq(-5, 40, by = 5)
+
+cut(temp, breaks = c(-Inf, 0, 10, 20, 30, Inf), right = TRUE, labels = c("freezing", "cold", "cool", "warm", "hot"))
+```
+
+If `<` was used instead of `<=`, you would have to change the `right` argument in `cut()`:
+
+```{r}
+temp <- seq(-5, 40, by = 5)
+
+cut(temp, breaks = c(-Inf, 0, 10, 20, 30, Inf), right = FALSE, labels = c("freezing", "cold", "cool", "warm", "hot"))
+```
+
+The main advantage of using `cut()` for this problem is that it takes a vector of multiple values, not just one (as is the case with an if-else statement).
+
 5.  What happens if you use `switch()` with numeric values?
+
+The first argument of `switch` (`EXPR`) determines which element of `...` is returned. 
+
+```{r}
+switch(EXPR = 2, 5, 6, 7, 8)
+```
+
+In this example, `EXPR = 2`, so the second element from `...` (`6`) is returned.
 
 6.  What does this `switch()` call do? What happens if `x` is "e"?
 
@@ -2509,6 +2597,32 @@ Using `norm_r()`, `norm_d()` instead of  `rnorm()`, `dnorm()` would be better be
     
     Experiment, then carefully read the documentation.
     
+It takes the `EXPR` (`x`) and looks for a value in `...` (stored in the elements `a`, `b`, `c`, and `d`) that partially matches and returns that value.
+
+```{r}
+x <- "a"
+
+switch(x, 
+       a = ,
+       b = "ab",
+       c = ,
+       d = "cd"
+)
+```
+
+```{r}
+x <- "e"
+
+switch(x, 
+       a = ,
+       b = "ab",
+       c = ,
+       d = "cd"
+)
+```
+
+If `x` is "e" then it returns nothing.
+
 # 21. Iteration
 
 ## 21.2.1 Exercises
