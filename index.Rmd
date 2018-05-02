@@ -2676,6 +2676,75 @@ cor(x, y, method = "spearman")
 cor(x, y, method = "caveman") # throws an error
 ```
 
+# 20. Vectors
+
+## 20.3.5 Exercises
+
+1.  Describe the difference between `is.finite(x)` and  `!is.infinite(x)`.
+
+```{r}
+x <- c(1, NA, NaN, Inf, -Inf)
+is.finite(x)
+!is.infinite(x)
+```
+
+`is.finite(x)` indicates which elements of a vector are finite (not `Inf` and not `NA`). `!is.infinite(x)` will return `TRUE` for any elements that are not infinite, including `NA` and `NaN`.
+
+2.  Read the source code for `dplyr::near()` (Hint: to see the source code,
+    drop the `()`). How does it work?
+    
+```{r}
+near
+```
+    
+It evaluates whether the difference between `x` and `y` is less than the tolerance of comparison (`tol`). This is useful for evaluating the equality of doubles which are approximations because the amount of memory in a computer is fixed.
+    
+3.  A logical vector can take 3 possible values. How many possible
+    values can an integer vector take? How many possible values can
+    a double take? Use google to do some research.
+    
+According to the help documentation for `integer` and `double`, an integer vector can take up to about +/-2*10^9. A double can take a range of absolute values from about 2e-308 to 2e+308, however this depends on the CPU.
+
+4.  Brainstorm at least four functions that allow you to convert a double to an
+    integer. How do they differ? Be precise.
+    
+```{r}
+# 1
+x <- as.double(c(1.0, 3.5, 5.25))
+as.integer(x)
+
+# 2
+# From the readr package
+parse_number(x)
+
+# 3
+ceiling(x)
+
+# 4
+floor(x)
+```
+   
+`as.integer` coerces its argument to be of integer type. Similarly, `parse_number` is flexible -- unlike `parse_integer` it ignores floating numbers. You can also round numbers using functions from `round` (e.g.,`floor` will return a vector of integers that have been rounded-down).
+    
+5.  What functions from the readr package allow you to turn a string
+    into logical, integer, and double vector?
+    
+The `parse_`* functions:
+
+```{r}
+x <- c("TRUE")
+str(x)
+str(parse_logical(x))
+
+x <- c("1")
+str(x)
+str(parse_integer(x))
+
+x <- c("1.00")
+str(x)
+str(parse_double(x))
+```
+
 # 21. Iteration
 
 ## 21.2.1 Exercises
